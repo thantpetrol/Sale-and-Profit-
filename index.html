@@ -89,7 +89,7 @@
         </div>
 
         <!-- Metric Dashboard Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white p-5 rounded-xl border-l-4 border-blue-500 border-gray-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider">ယနေ့ ရောင်းရလီတာ</p>
@@ -120,6 +120,17 @@
                 </div>
             </div>
 
+            <!-- New Card: ယနေ့ အများဆုံးရောင်းရသောဆီ -->
+            <div class="bg-white p-5 rounded-xl border-l-4 border-amber-500 border-gray-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-amber-600 uppercase tracking-wider">ယနေ့ ရောင်းအားအကောင်းဆုံးဆီ</p>
+                    <h3 class="text-xl font-bold text-gray-800 mt-1" id="dashTodayTopFuel">-</h3>
+                </div>
+                <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
+                    <i class="fa-solid fa-star text-xl"></i>
+                </div>
+            </div>
+
             <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">စုစုပေါင်း ရောင်းရလီတာ</p>
@@ -147,17 +158,6 @@
                 </div>
                 <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600">
                     <i class="fa-solid fa-coins text-xl"></i>
-                </div>
-            </div>
-
-            <!-- ယနေ့ ရောင်းရဆုံး ဆီအမျိုးအစား Card -->
-            <div class="bg-white p-5 rounded-xl border-l-4 border-amber-500 border-gray-100 shadow-sm flex items-center justify-between sm:col-span-2 lg:col-span-3">
-                <div>
-                    <p class="text-xs font-semibold text-amber-600 uppercase tracking-wider">ယနေ့ ရောင်းရဆုံး ဆီအမျိုးအစား (Best Seller)</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1" id="dashBestSeller">မရှိသေးပါ</h3>
-                </div>
-                <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
-                    <i class="fa-solid fa-award text-xl"></i>
                 </div>
             </div>
         </div>
@@ -594,8 +594,6 @@
             let todayLiters = 0;
             let todayRevenue = 0;
             let todayProfit = 0;
-            
-            // ယနေ့ ဆီအမျိုးအစားအလိုက် လီတာစုစုပေါင်း တွက်ချက်ရန်
             let todayFuelLiters = {};
 
             salesDataArray.forEach(item => {
@@ -608,20 +606,20 @@
                 }
             });
 
-            // ယနေ့ အများဆုံးရောင်းရသည့် ဆီအမျိုးအစား ရှာဖွေခြင်း
-            let bestSeller = "မရှိသေးပါ";
+            // ယနေ့ အများဆုံးရောင်းရသော ဆီအမျိုးအစား ရှာဖွေခြင်း
+            let topFuel = "-";
             let maxLiters = 0;
-            for (let fuel in todayFuelLiters) {
-                if (todayFuelLiters[fuel] > maxLiters) {
-                    maxLiters = todayFuelLiters[fuel];
-                    bestSeller = `${fuel} (${maxLiters.toLocaleString()} L)`;
+            for (let f in todayFuelLiters) {
+                if (todayFuelLiters[f] > maxLiters) {
+                    maxLiters = todayFuelLiters[f];
+                    topFuel = f;
                 }
             }
 
             document.getElementById('dashTodayLiters').innerText = todayLiters.toLocaleString() + ' L';
             document.getElementById('dashTodayRevenue').innerText = todayRevenue.toLocaleString() + ' Ks';
             document.getElementById('dashTodayProfit').innerText = todayProfit.toLocaleString() + ' Ks';
-            document.getElementById('dashBestSeller').innerText = bestSeller;
+            document.getElementById('dashTodayTopFuel').innerText = topFuel !== "-" ? `${topFuel} (${maxLiters.toLocaleString()} L)` : "မရှိသေးပါ";
 
             document.getElementById('dashTotalLiters').innerText = totalLiters.toLocaleString() + ' L';
             document.getElementById('dashTotalRevenue').innerText = totalRevenue.toLocaleString() + ' Ks';
