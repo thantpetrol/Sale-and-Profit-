@@ -292,7 +292,7 @@
         // Authentication Logic
         const AUTH_USER = "thant";
         const AUTH_PASS = "7777";
-        const ADMIN_PASS = "734803"; // Edit နှင့် Delete အတွက် Password
+        const ADMIN_PASS = "734803"; // Add, Edit နှင့် Delete အတွက် Password
 
         window.checkAuth = function() {
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
@@ -414,6 +414,15 @@
             e.preventDefault();
 
             const editKey = document.getElementById('editKey').value;
+
+            // အသစ်ထည့်ခြင်း သို့မဟုတ် ပြင်ဆင်ခြင်းအတွက် Password စစ်ဆေးခြင်း
+            const actionText = editKey ? "စာရင်းပြင်ဆင်ရန်" : "စာရင်းအသစ်သိမ်းဆည်းရန်";
+            const inputPass = prompt(`${actionText} Admin Password ထည့်ပါ:`);
+            if (inputPass !== ADMIN_PASS) {
+                if (inputPass !== null) alert("Password မှားယွင်းနေပါသည်။");
+                return;
+            }
+
             const date = document.getElementById('saleDate').value;
             const fuelType = document.getElementById('fuelType').value;
             const buyPrice = parseFloat(buyPriceInput.value);
