@@ -292,7 +292,7 @@
         // Authentication Logic
         const AUTH_USER = "thant";
         const AUTH_PASS = "7777";
-        const ACTION_PASSCODE = "734803"; // Edit နှင့် Delete အတွက် Password
+        const ADMIN_PASS = "734803"; // Edit နှင့် Delete အတွက် Password
 
         window.checkAuth = function() {
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
@@ -457,9 +457,9 @@
         }
 
         window.editRecord = function(id) {
-            const enteredPass = prompt("စာရင်းပြင်ဆင်ရန် Passcode ထည့်ပါ:");
-            if (enteredPass !== ACTION_PASSCODE) {
-                if (enteredPass !== null) alert("Passcode မှားယွင်းနေပါသည်။");
+            const inputPass = prompt("စာရင်းပြင်ဆင်ရန် Admin Password ထည့်ပါ:");
+            if (inputPass !== ADMIN_PASS) {
+                if (inputPass !== null) alert("Password မှားယွင်းနေပါသည်။");
                 return;
             }
 
@@ -483,9 +483,9 @@
         }
 
         window.deleteRecord = function(id) {
-            const enteredPass = prompt("စာရင်းဖျက်ရန် Passcode ထည့်ပါ:");
-            if (enteredPass !== ACTION_PASSCODE) {
-                if (enteredPass !== null) alert("Passcode မှားယွင်းနေပါသည်။");
+            const inputPass = prompt("စာရင်းဖျက်ရန် Admin Password ထည့်ပါ:");
+            if (inputPass !== ADMIN_PASS) {
+                if (inputPass !== null) alert("Password မှားယွင်းနေပါသည်။");
                 return;
             }
 
@@ -597,6 +597,7 @@
             csvContent += "ရက်စွဲ,ဆီအမျိုးအစား,ဝယ်ဈေး (ကျပ်),ရောင်းဈေး (ကျပ်),လီတာ,ရောင်းရငွေ (ကျပ်),အမြတ် (ကျပ်)\n";
 
             salesDataArray.forEach(row => {
+                // Excel က ရက်စွဲကို အလိုအလျောက် မပြောင်းအောင် စာသားသပ်သပ်အနေဖြင့် ထည့်သွင်းခြင်း
                 csvContent += `="\t${row.date}","${row.fuelType}",${row.buyPrice},${row.sellPrice},${row.liters},${row.revenue},${row.profit}\n`;
             });
 
