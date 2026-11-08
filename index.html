@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>သန့်ဆီဆိုင် အရောင်းအဝယ်စာရင်း</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font (Padauk for Myanmar Text) -->
+    <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Padauk', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen relative">
+
+    <!-- Login Overlay Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+            <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 text-center">
+                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 text-yellow-400 text-2xl">
+                    <i class="fa-solid fa-gas-pump"></i>
+                </div>
+                <h2 class="text-xl font-bold">သန့်ဆီဆိုင် အရောင်းအဝယ်စာရင်း</h2>
+                <p class="text-xs text-blue-100 mt-1">စနစ်သို့ ဝင်ရောက်ရန် Login ပြုလုပ်ပါ</p>
+            </div>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)" class="p-6 space-y-4">
+                <div id="loginError" class="hidden bg-red-50 text-red-600 border border-red-200 text-xs rounded-lg p-3 text-center font-bold">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Username သို့မဟုတ် Password မှားယွင်းနေပါသည်။
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Username</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa-solid fa-user text-sm"></i>
+                        </span>
+                        <input type="text" id="usernameInput" required placeholder="Enter username" 
+                            class="w-full pl-9 border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Password</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa-solid fa-lock text-sm"></i>
+                        </span>
+                        <input type="password" id="passwordInput" required placeholder="Enter password" 
+                            class="w-full pl-9 border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition text-sm flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Login ဝင်မည်</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content Container (Hidden until logged in) -->
+    <div id="mainApp" class="max-w-7xl mx-auto space-y-6 hidden">
+
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3">
+                    <i class="fa-solid font-bold fa-gas-pump text-yellow-400"></i>
+                    သန့်ဆီဆိုင် အရောင်းအဝယ်စာရင်း မှတ်တမ်း
+                </h1>
+                <p class="text-blue-100 text-sm mt-1">နေ့စဉ် ဆီအရောင်း၊ ဝင်ငွေနှင့် အမြတ်စာရင်း စီမံခန့်ခွဲမှု</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl text-sm">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="currentDateTime"></span>
+                </div>
+                <button onclick="handleLogout()" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
+                    <i class="fa-solid fa-right-from-bracket"></i> ထွက်မည်
+                </button>
+            </div>
+        </div>
+
+        <!-- Metric Dashboard Cards (Today Metrics & Overall Metrics) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Today Liters -->
+            <div class="bg-white p-5 rounded-xl border-l-4 border-blue-500 border-gray-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider">ယနေ့ ရောင်းရလီတာ</p>
+                    <h3 class="text-2xl font-bold text-gray-800 mt-1" id="dashTodayLiters">0 L</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                    <i class="fa-solid fa-droplet text-xl"></i>
+                </div>
+            </div>
+
+            <!-- Today Revenue -->
+            <div class="bg-white p-5 rounded-xl border-l-4 border-green-500 border-gray-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-green-600 uppercase tracking-wider">ယနေ့ ရောင်းရငွေ</p>
+                    <h3 class="text-2xl font-bold text-green-600 mt-1" id="dashTodayRevenue">0 Ks</h3>
+                </div>
+                <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center text-green-600">
+                    <i class="fa-solid fa-money-bill-wave text-xl"></i>
+                </div>
+            </div>
+
+            <!-- Today Profit -->
+            <div class="bg-white p-5 rounded-xl border-l-4 border-indigo-500 border-gray-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">ယနေ့ အမြတ်ငွေ</p>
+                    <h3 class="text-2xl font-bold text-indigo-600 mt-1" id="dashTodayProfit">0 Ks</h3>
+                </div>
+                <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
+                    <i class="fa-solid fa-chart-line text-xl"></i>
+                </div>
+            </div>
+
+            <!-- Total Liters (Overall) -->
+            <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">စုစုပေါင်း ရောင်းရလီတာ</p>
+                    <h3 class="text-2xl font-bold text-gray-800 mt-1" id="dashTotalLiters">0 L</h3>
+                </div>
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600">
+                    <i class="fa-solid fa-gas-pump text-xl"></i>
+                </div>
+            </div>
+
+            <!-- Total Revenue (Overall) -->
+            <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">စုစုပေါင်း ရောင်းရငွေ</p>
+                    <h3 class="text-2xl font-bold text-green-700 mt-1" id="dashTotalRevenue">0 Ks</h3>
+                </div>
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600">
+                    <i class="fa-solid fa-wallet text-xl"></i>
+                </div>
+            </div>
+
+            <!-- Total Profit (Overall) -->
+            <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">စုစုပေါင်း အမြတ်ငွေ</p>
+                    <h3 class="text-2xl font-bold text-indigo-700 mt-1" id="dashTotalProfit">0 Ks</h3>
+                </div>
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600">
+                    <i class="fa-solid fa-coins text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Form Section -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-blue-600"></i>
+                <span id="formTitle">အရောင်းစာရင်း အသစ်ထည့်ရန်</span>
+            </h2>
+            <form id="salesForm" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <input type="hidden" id="editIndex" value="-1">
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">ရက်စွဲ</label>
+                    <input type="date" id="saleDate" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">ဆီအမျိုးအစား</label>
+                    <select id="fuelType" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="92 Octane">92 Octane</option>
+                        <option value="95 Octane">95 Octane</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Premium Diesel">Premium Diesel</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">ဆီဝယ်ဈေး (၁ လီတာ / ကျပ်)</label>
+                    <input type="number" step="any" id="buyPrice" placeholder="ဥပမာ - 2800" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">ဆီရောင်းဈေး (၁ လီတာ / ကျပ်)</label>
+                    <input type="number" step="any" id="sellPrice" placeholder="ဥပမာ - 3100" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">ရောင်းရငွေ (စုစုပေါင်း ကျပ်)</label>
+                    <input type="number" step="any" id="totalRevenue" placeholder="ဥပမာ - 310000" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-yellow-50">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">ရောင်းရလီတာ (Liter)</label>
+                    <input type="number" step="any" id="liters" placeholder="ဥပမာ - 100" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">စုစုပေါင်း အမြတ် (ကျပ်)</label>
+                    <input type="number" id="totalProfit" readonly placeholder="Auto Calculated" class="w-full border border-gray-200 bg-gray-100 text-gray-700 font-bold rounded-lg p-2.5 text-sm outline-none">
+                </div>
+
+                <div class="flex items-end gap-2">
+                    <button type="submit" id="submitBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition text-sm flex items-center justify-center gap-2 shadow">
+                        <i class="fa-solid fa-save"></i>
+                        <span>သိမ်းဆည်းမည်</span>
+                    </button>
+                    <button type="button" id="cancelBtn" onclick="resetForm()" class="hidden bg-gray-500 hover:bg-gray-600 text-white font-bold py-2.5 px-4 rounded-lg transition text-sm">
+                        မလုပ်တော့ပါ
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- History & Filtering Section -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-history text-indigo-600"></i>
+                        ဆီအရောင်း စာရင်း မှတ်တမ်းများ
+                    </h2>
+                    <p class="text-xs text-gray-500 mt-0.5">ရက်စွဲ နှင့် အမျိုးအစားအလိုက် ရှာဖွေနိုင်ပါသည်</p>
+                </div>
+
+                <!-- Filters -->
+                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                    <input type="date" id="filterDate" onchange="renderTable()" class="border border-gray-300 rounded-lg p-2 text-xs outline-none">
+                    <select id="filterFuel" onchange="renderTable()" class="border border-gray-300 rounded-lg p-2 text-xs outline-none">
+                        <option value="ALL">ဆီအမျိုးအစား အားလုံး</option>
+                        <option value="92 Octane">92 Octane</option>
+                        <option value="95 Octane">95 Octane</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Premium Diesel">Premium Diesel</option>
+                    </select>
+                    <button onclick="clearFilters()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-xs font-bold transition">
+                        Reset
+                    </button>
+                    <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                        <i class="fa-solid fa-file-excel"></i> Export CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                <table class="w-full text-sm text-left text-gray-600">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-100 border-b border-gray-200">
+                        <tr>
+                            <th class="px-4 py-3">ရက်စွဲ</th>
+                            <th class="px-4 py-3">ဆီအမျိုးအစား</th>
+                            <th class="px-4 py-3 text-right">ဝယ်ဈေး</th>
+                            <th class="px-4 py-3 text-right">ရောင်းဈေး</th>
+                            <th class="px-4 py-3 text-right">လီတာ (L)</th>
+                            <th class="px-4 py-3 text-right">ရောင်းရငွေ (ကျပ်)</th>
+                            <th class="px-4 py-3 text-right">အမြတ် (ကျပ်)</th>
+                            <th class="px-4 py-3 text-center">လုပ်ဆောင်ချက်</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesTableBody" class="divide-y divide-gray-200">
+                        <!-- Table Rows will be rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="noDataMsg" class="hidden text-center py-8 text-gray-400">
+                <i class="fa-solid fa-box-open text-4xl mb-2 block"></i>
+                စာရင်း မှတ်တမ်းများ မရှိသေးပါ။
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Authentication Logic
+        const AUTH_USER = "thant";
+        const AUTH_PASS = "7777";
+
+        function checkAuth() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            const loginModal = document.getElementById('loginModal');
+            const mainApp = document.getElementById('mainApp');
+
+            if (isLoggedIn === 'true') {
+                loginModal.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                renderTable();
+            } else {
+                loginModal.classList.remove('hidden');
+                mainApp.classList.add('hidden');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('usernameInput').value;
+            const pass = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('loginError');
+
+            if (user === AUTH_USER && pass === AUTH_PASS) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                errorMsg.classList.add('hidden');
+                document.getElementById('loginForm').reset();
+                checkAuth();
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('isLoggedIn');
+            checkAuth();
+        }
+
+        // Storage Key
+        const STORAGE_KEY = 'gas_station_sales_data';
+        let salesData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+        // Set default date to Today
+        document.getElementById('saleDate').valueAsDate = new Date();
+
+        // Realtime DateTime update
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('currentDateTime').innerText = now.toLocaleString('my-MM', {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            });
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Input Fields Reference
+        const buyPriceInput = document.getElementById('buyPrice');
+        const sellPriceInput = document.getElementById('sellPrice');
+        const litersInput = document.getElementById('liters');
+        const revenueInput = document.getElementById('totalRevenue');
+        const profitInput = document.getElementById('totalProfit');
+
+        // Calculation Events
+        buyPriceInput.addEventListener('input', calculateFromLiters);
+        sellPriceInput.addEventListener('input', calculateFromLiters);
+
+        // Input Liters -> Auto Calculate Revenue & Profit
+        litersInput.addEventListener('input', calculateFromLiters);
+
+        // Input Revenue -> Auto Calculate Liters & Profit
+        revenueInput.addEventListener('input', calculateFromRevenue);
+
+        function calculateFromLiters() {
+            const buyPrice = parseFloat(buyPriceInput.value) || 0;
+            const sellPrice = parseFloat(sellPriceInput.value) || 0;
+            const liters = parseFloat(litersInput.value) || 0;
+
+            if (sellPrice > 0 && liters > 0) {
+                const revenue = liters * sellPrice;
+                revenueInput.value = revenue.toFixed(0);
+
+                const profit = liters * (sellPrice - buyPrice);
+                profitInput.value = profit.toFixed(0);
+            } else {
+                profitInput.value = '';
+            }
+        }
+
+        function calculateFromRevenue() {
+            const buyPrice = parseFloat(buyPriceInput.value) || 0;
+            const sellPrice = parseFloat(sellPriceInput.value) || 0;
+            const revenue = parseFloat(revenueInput.value) || 0;
+
+            if (sellPrice > 0 && revenue > 0) {
+                const liters = revenue / sellPrice;
+                litersInput.value = liters.toFixed(2);
+
+                const profit = liters * (sellPrice - buyPrice);
+                profitInput.value = profit.toFixed(0);
+            } else {
+                profitInput.value = '';
+            }
+        }
+
+        // Handle Form Submit (Add / Edit)
+        document.getElementById('salesForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const editIndex = parseInt(document.getElementById('editIndex').value);
+            const date = document.getElementById('saleDate').value;
+            const fuelType = document.getElementById('fuelType').value;
+            const buyPrice = parseFloat(buyPriceInput.value);
+            const sellPrice = parseFloat(sellPriceInput.value);
+            const liters = parseFloat(litersInput.value);
+            const revenue = parseFloat(revenueInput.value) || (liters * sellPrice);
+            const profit = parseFloat(profitInput.value) || (liters * (sellPrice - buyPrice));
+
+            const record = { date, fuelType, buyPrice, sellPrice, liters, revenue, profit };
+
+            if (editIndex === -1) {
+                // Add New
+                salesData.unshift(record);
+            } else {
+                // Edit Existing
+                salesData[editIndex] = record;
+            }
+
+            saveData();
+            resetForm();
+            renderTable();
+        });
+
+        // Save Data to LocalStorage
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(salesData));
+        }
+
+        // Reset Form
+        function resetForm() {
+            document.getElementById('salesForm').reset();
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('saleDate').valueAsDate = new Date();
+            document.getElementById('formTitle').innerText = "အရောင်းစာရင်း အသစ်ထည့်ရန်";
+            document.getElementById('submitBtn').querySelector('span').innerText = "သိမ်းဆည်းမည်";
+            document.getElementById('cancelBtn').classList.add('hidden');
+        }
+
+        // Edit Record
+        function editRecord(index) {
+            const item = salesData[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('saleDate').value = item.date;
+            document.getElementById('fuelType').value = item.fuelType;
+            buyPriceInput.value = item.buyPrice;
+            sellPriceInput.value = item.sellPrice;
+            litersInput.value = item.liters;
+            revenueInput.value = item.revenue;
+            profitInput.value = item.profit;
+
+            document.getElementById('formTitle').innerText = "စာရင်း ပြင်ဆင်ရန်";
+            document.getElementById('submitBtn').querySelector('span').innerText = "ပြင်ဆင်မည်";
+            document.getElementById('cancelBtn').classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Delete Record
+        function deleteRecord(index) {
+            if (confirm("ဒီစာရင်းမှတ်တမ်းကို ဖျက်ရန် သေချာပါသလား?")) {
+                salesData.splice(index, 1);
+                saveData();
+                renderTable();
+            }
+        }
+
+        // Clear Filters
+        function clearFilters() {
+            document.getElementById('filterDate').value = '';
+            document.getElementById('filterFuel').value = 'ALL';
+            renderTable();
+        }
+
+        // Helper to format ISO date (YYYY-MM-DD)
+        function getTodayString() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Render Table & Metrics Dashboard
+        function renderTable() {
+            const filterDate = document.getElementById('filterDate').value;
+            const filterFuel = document.getElementById('filterFuel').value;
+
+            const tableBody = document.getElementById('salesTableBody');
+            const noDataMsg = document.getElementById('noDataMsg');
+            tableBody.innerHTML = '';
+
+            let filteredData = salesData.filter(item => {
+                const matchDate = filterDate ? item.date === filterDate : true;
+                const matchFuel = filterFuel !== 'ALL' ? item.fuelType === filterFuel : true;
+                return matchDate && matchFuel;
+            });
+
+            // Calculate Overall Metrics
+            let totalLiters = 0;
+            let totalRevenue = 0;
+            let totalProfit = 0;
+
+            filteredData.forEach((item, index) => {
+                totalLiters += item.liters;
+                totalRevenue += item.revenue;
+                totalProfit += item.profit;
+
+                // Color tags for fuel types
+                let fuelBadgeClass = "bg-blue-100 text-blue-800";
+                if(item.fuelType === '95 Octane') fuelBadgeClass = "bg-green-100 text-green-800";
+                if(item.fuelType === 'Diesel') fuelBadgeClass = "bg-amber-100 text-amber-800";
+                if(item.fuelType === 'Premium Diesel') fuelBadgeClass = "bg-purple-100 text-purple-800";
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition border-b";
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-semibold text-gray-700">${item.date}</td>
+                    <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${fuelBadgeClass}">${item.fuelType}</span></td>
+                    <td class="px-4 py-3 text-right">${item.buyPrice.toLocaleString()} Ks</td>
+                    <td class="px-4 py-3 text-right">${item.sellPrice.toLocaleString()} Ks</td>
+                    <td class="px-4 py-3 text-right font-bold text-gray-800">${item.liters.toLocaleString()} L</td>
+                    <td class="px-4 py-3 text-right font-bold text-green-600">${item.revenue.toLocaleString()} Ks</td>
+                    <td class="px-4 py-3 text-right font-bold text-indigo-600">${item.profit.toLocaleString()} Ks</td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="editRecord(${index})" class="text-blue-600 hover:text-blue-800 mx-1 p-1" title="ပြင်ဆင်မည်">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="deleteRecord(${index})" class="text-red-600 hover:text-red-800 mx-1 p-1" title="ဖျက်မည်">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Calculate Today Metrics (Filtering salesData for today's date)
+            const todayStr = getTodayString();
+            let todayLiters = 0;
+            let todayRevenue = 0;
+            let todayProfit = 0;
+
+            salesData.forEach(item => {
+                if (item.date === todayStr) {
+                    todayLiters += item.liters;
+                    todayRevenue += item.revenue;
+                    todayProfit += item.profit;
+                }
+            });
+
+            // Update Dashboards
+            document.getElementById('dashTodayLiters').innerText = todayLiters.toLocaleString() + ' L';
+            document.getElementById('dashTodayRevenue').innerText = todayRevenue.toLocaleString() + ' Ks';
+            document.getElementById('dashTodayProfit').innerText = todayProfit.toLocaleString() + ' Ks';
+
+            document.getElementById('dashTotalLiters').innerText = totalLiters.toLocaleString() + ' L';
+            document.getElementById('dashTotalRevenue').innerText = totalRevenue.toLocaleString() + ' Ks';
+            document.getElementById('dashTotalProfit').innerText = totalProfit.toLocaleString() + ' Ks';
+
+            if (filteredData.length === 0) {
+                noDataMsg.classList.remove('hidden');
+            } else {
+                noDataMsg.classList.add('hidden');
+            }
+        }
+
+        // Export Table Data to CSV
+        function exportToCSV() {
+            if (salesData.length === 0) {
+                alert("ထုတ်ယူရန် စာရင်း မှတ်တမ်း မရှိသေးပါ!");
+                return;
+            }
+
+            let csvContent = "\uFEFF"; // UTF-8 BOM for Myanmar Text
+            csvContent += "ရက်စွဲ,ဆီအမျိုးအစား,ဝယ်ဈေး (ကျပ်),ရောင်းဈေး (ကျပ်),လီတာ,ရောင်းရငွေ (ကျပ်),အမြတ် (ကျပ်)\n";
+
+            salesData.forEach(row => {
+                csvContent += `"${row.date}","${row.fuelType}",${row.buyPrice},${row.sellPrice},${row.liters},${row.revenue},${row.profit}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `gas_sales_report_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initial Auth Check
+        checkAuth();
+    </script>
+</body>
+</html>
