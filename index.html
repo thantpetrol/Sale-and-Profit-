@@ -214,25 +214,35 @@
 
         <!-- History & Filtering Section -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
                 <div>
                     <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                         <i class="fa-solid fa-history text-indigo-600"></i>
                         ဆီအရောင်း စာရင်း မှတ်တမ်းများ
                     </h2>
-                    <p class="text-xs text-gray-500 mt-0.5">ရက်စွဲ နှင့် အမျိုးအစားအလိုက် ရှာဖွေနိုင်ပါသည်</p>
+                    <p class="text-xs text-gray-500 mt-0.5">ရက်စွဲအကွာအဝေး (စတင် - ပြီးဆုံး) နှင့် ဆီအမျိုးအစားအလိုက် ရှာဖွေနိုင်ပါသည်</p>
                 </div>
 
-                <!-- Filters -->
-                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                    <input type="date" id="filterDate" onchange="renderTable()" class="border border-gray-300 rounded-lg p-2 text-xs outline-none">
-                    <select id="filterFuel" onchange="renderTable()" class="border border-gray-300 rounded-lg p-2 text-xs outline-none">
+                <!-- Filters & Search Button -->
+                <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                    <div class="flex items-center gap-1">
+                        <span class="text-xs text-gray-500 font-bold">မှ:</span>
+                        <input type="date" id="startDate" class="border border-gray-300 rounded-lg p-2 text-xs outline-none">
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="text-xs text-gray-500 font-bold">ထိ:</span>
+                        <input type="date" id="endDate" class="border border-gray-300 rounded-lg p-2 text-xs outline-none">
+                    </div>
+                    <select id="filterFuel" class="border border-gray-300 rounded-lg p-2 text-xs outline-none">
                         <option value="ALL">ဆီအမျိုးအစား အားလုံး</option>
                         <option value="92 Octane">92 Octane</option>
                         <option value="95 Octane">95 Octane</option>
                         <option value="Diesel">Diesel</option>
                         <option value="Premium Diesel">Premium Diesel</option>
                     </select>
+                    <button onclick="renderTable()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow">
+                        <i class="fa-solid fa-search"></i> Search
+                    </button>
                     <button onclick="clearFilters()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-xs font-bold transition">
                         Reset
                     </button>
@@ -292,7 +302,7 @@
         // Authentication Logic
         const AUTH_USER = "thant";
         const AUTH_PASS = "7777";
-        const ADMIN_PASS = "734803"; // သိမ်းဆည်းရန်၊ ပြင်ဆင်ရန် နှင့် ဖျက်ရန်အတွက် Password
+        const ADMIN_PASS = "734803";
 
         window.checkAuth = function() {
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
@@ -415,7 +425,6 @@
 
             const editKey = document.getElementById('editKey').value;
 
-            // အရောင်းစာရင်း အသစ်ထည့်ခြင်း သို့မဟုတ် ပြင်ဆင်ခြင်းအတွက် Admin Password တောင်းခံခြင်း
             const inputPass = prompt("အရောင်းစာရင်း သိမ်းဆည်းရန် Admin Password ထည့်ပါ:");
             if (inputPass !== ADMIN_PASS) {
                 if (inputPass !== null) alert("Password မှားယွင်းနေပါသည်။ စာရင်းမသိမ်းဆည်းပါ။");
@@ -433,7 +442,6 @@
             const record = { date, fuelType, buyPrice, sellPrice, liters, revenue, profit };
 
             if (!editKey) {
-                // Add New to Firebase
                 const newRef = push(salesRef);
                 set(newRef, record)
                     .then(() => {
@@ -444,7 +452,6 @@
                         alert("သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိပါသည်: " + error.message);
                     });
             } else {
-                // Update Existing in Firebase
                 const updateRef = ref(db, 'sales/' + editKey);
                 set(updateRef, record)
                     .then(() => {
@@ -506,7 +513,8 @@
         }
 
         window.clearFilters = function() {
-            document.getElementById('filterDate').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
             document.getElementById('filterFuel').value = 'ALL';
             renderTable();
         }
@@ -519,8 +527,9 @@
             return `${year}-${month}-${day}`;
         }
 
-        function renderTable() {
-            const filterDate = document.getElementById('filterDate').value;
+        window.renderTable = function() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
             const filterFuel = document.getElementById('filterFuel').value;
 
             const tableBody = document.getElementById('salesTableBody');
@@ -528,9 +537,10 @@
             tableBody.innerHTML = '';
 
             let filteredData = salesDataArray.filter(item => {
-                const matchDate = filterDate ? item.date === filterDate : true;
+                const matchStartDate = startDate ? item.date >= startDate : true;
+                const matchEndDate = endDate ? item.date <= endDate : true;
                 const matchFuel = filterFuel !== 'ALL' ? item.fuelType === filterFuel : true;
-                return matchDate && matchFuel;
+                return matchStartDate && matchEndDate && matchFuel;
             });
 
             let totalLiters = 0;
@@ -607,7 +617,6 @@
             csvContent += "ရက်စွဲ,ဆီအမျိုးအစား,ဝယ်ဈေး (ကျပ်),ရောင်းဈေး (ကျပ်),လီတာ,ရောင်းရငွေ (ကျပ်),အမြတ် (ကျပ်)\n";
 
             salesDataArray.forEach(row => {
-                // Excel က ရက်စွဲကို အလိုအလျောက် မပြောင်းအောင် စာသားသပ်သပ်အနေဖြင့် ထည့်သွင်းခြင်း
                 csvContent += `="\t${row.date}","${row.fuelType}",${row.buyPrice},${row.sellPrice},${row.liters},${row.revenue},${row.profit}\n`;
             });
 
