@@ -75,7 +75,7 @@
                     <i class="fa-solid font-bold fa-gas-pump text-yellow-400"></i>
                     သန့်ဆီဆိုင် အရောင်းအဝယ်စာရင်း မှတ်တမ်း
                 </h1>
-                <p class="text-blue-100 text-sm mt-1">နေ့စဉ် ဆီအရောင်း၊ ဝင်ငွေနှင့် အမြတ်စာရင်း စီမံခန့်ခွဲမှု</p>
+                <p class="text-blue-100 text-sm mt-1">နေ့စဉ် ဆီအရောင်း၊ ဝင်ငွေနှင့် အမြတ်စာရင်း စီမံခန့်ခွဲမှု (Online Real-time Sync)</p>
             </div>
             <div class="flex items-center gap-3">
                 <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl text-sm">
@@ -88,9 +88,8 @@
             </div>
         </div>
 
-        <!-- Metric Dashboard Cards (Today Metrics & Overall Metrics) -->
+        <!-- Metric Dashboard Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Today Liters -->
             <div class="bg-white p-5 rounded-xl border-l-4 border-blue-500 border-gray-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider">ယနေ့ ရောင်းရလီတာ</p>
@@ -101,7 +100,6 @@
                 </div>
             </div>
 
-            <!-- Today Revenue -->
             <div class="bg-white p-5 rounded-xl border-l-4 border-green-500 border-gray-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-green-600 uppercase tracking-wider">ယနေ့ ရောင်းရငွေ</p>
@@ -112,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- Today Profit -->
             <div class="bg-white p-5 rounded-xl border-l-4 border-indigo-500 border-gray-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">ယနေ့ အမြတ်ငွေ</p>
@@ -123,7 +120,6 @@
                 </div>
             </div>
 
-            <!-- Total Liters (Overall) -->
             <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">စုစုပေါင်း ရောင်းရလီတာ</p>
@@ -134,7 +130,6 @@
                 </div>
             </div>
 
-            <!-- Total Revenue (Overall) -->
             <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">စုစုပေါင်း ရောင်းရငွေ</p>
@@ -145,7 +140,6 @@
                 </div>
             </div>
 
-            <!-- Total Profit (Overall) -->
             <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">စုစုပေါင်း အမြတ်ငွေ</p>
@@ -164,7 +158,7 @@
                 <span id="formTitle">အရောင်းစာရင်း အသစ်ထည့်ရန်</span>
             </h2>
             <form id="salesForm" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <input type="hidden" id="editIndex" value="-1">
+                <input type="hidden" id="editKey" value="">
 
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">ရက်စွဲ</label>
@@ -276,13 +270,31 @@
 
     </div>
 
-    <!-- JavaScript Logic -->
-    <script>
+    <!-- Firebase & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-analytics.js";
+        import { getDatabase, ref, push, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaLriBbZAHfh5dKIBCWtx4Z7zUOiRpb6U",
+            authDomain: "thantpetrol-540fa.firebaseapp.com",
+            projectId: "thantpetrol-540fa",
+            storageBucket: "thantpetrol-540fa.firebasestorage.app",
+            messagingSenderId: "765513705738",
+            appId: "1:765513705738:web:df75426568f53b0da932f3",
+            measurementId: "G-TCSSR78T0N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getDatabase(app);
+
         // Authentication Logic
         const AUTH_USER = "thant";
         const AUTH_PASS = "7777";
 
-        function checkAuth() {
+        window.checkAuth = function() {
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
             const loginModal = document.getElementById('loginModal');
             const mainApp = document.getElementById('mainApp');
@@ -290,14 +302,13 @@
             if (isLoggedIn === 'true') {
                 loginModal.classList.add('hidden');
                 mainApp.classList.remove('hidden');
-                renderTable();
             } else {
                 loginModal.classList.remove('hidden');
                 mainApp.classList.add('hidden');
             }
         }
 
-        function handleLogin(e) {
+        window.handleLogin = function(e) {
             e.preventDefault();
             const user = document.getElementById('usernameInput').value;
             const pass = document.getElementById('passwordInput').value;
@@ -307,50 +318,63 @@
                 sessionStorage.setItem('isLoggedIn', 'true');
                 errorMsg.classList.add('hidden');
                 document.getElementById('loginForm').reset();
-                checkAuth();
+                window.checkAuth();
             } else {
                 errorMsg.classList.remove('hidden');
             }
         }
 
-        function handleLogout() {
+        window.handleLogout = function() {
             sessionStorage.removeItem('isLoggedIn');
-            checkAuth();
+            window.checkAuth();
         }
 
-        // Storage Key
-        const STORAGE_KEY = 'gas_station_sales_data';
-        let salesData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let salesDataObj = {};
+        let salesDataArray = [];
+
+        // Realtime Database Listener (Auto Sync)
+        const salesRef = ref(db, 'sales');
+        onValue(salesRef, (snapshot) => {
+            const data = snapshot.val();
+            salesDataObj = data || {};
+            salesDataArray = [];
+            
+            for (let key in salesDataObj) {
+                salesDataArray.push({
+                    id: key,
+                    ...salesDataObj[key]
+                });
+            }
+            // Sort by date descending
+            salesDataArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+            renderTable();
+        });
 
         // Set default date to Today
         document.getElementById('saleDate').valueAsDate = new Date();
 
-        // Realtime DateTime update
         function updateDateTime() {
             const now = new Date();
-            document.getElementById('currentDateTime').innerText = now.toLocaleString('my-MM', {
-                dateStyle: 'medium',
-                timeStyle: 'short'
-            });
+            const dtElem = document.getElementById('currentDateTime');
+            if(dtElem) {
+                dtElem.innerText = now.toLocaleString('my-MM', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                });
+            }
         }
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // Input Fields Reference
         const buyPriceInput = document.getElementById('buyPrice');
         const sellPriceInput = document.getElementById('sellPrice');
         const litersInput = document.getElementById('liters');
         const revenueInput = document.getElementById('totalRevenue');
         const profitInput = document.getElementById('totalProfit');
 
-        // Calculation Events
         buyPriceInput.addEventListener('input', calculateFromLiters);
         sellPriceInput.addEventListener('input', calculateFromLiters);
-
-        // Input Liters -> Auto Calculate Revenue & Profit
         litersInput.addEventListener('input', calculateFromLiters);
-
-        // Input Revenue -> Auto Calculate Liters & Profit
         revenueInput.addEventListener('input', calculateFromRevenue);
 
         function calculateFromLiters() {
@@ -385,11 +409,11 @@
             }
         }
 
-        // Handle Form Submit (Add / Edit)
+        // Form Submit (Add or Update to Firebase)
         document.getElementById('salesForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const editIndex = parseInt(document.getElementById('editIndex').value);
+            const editKey = document.getElementById('editKey').value;
             const date = document.getElementById('saleDate').value;
             const fuelType = document.getElementById('fuelType').value;
             const buyPrice = parseFloat(buyPriceInput.value);
@@ -400,38 +424,33 @@
 
             const record = { date, fuelType, buyPrice, sellPrice, liters, revenue, profit };
 
-            if (editIndex === -1) {
-                // Add New
-                salesData.unshift(record);
+            if (!editKey) {
+                // Add New to Firebase
+                const newRef = push(salesRef);
+                set(newRef, record);
             } else {
-                // Edit Existing
-                salesData[editIndex] = record;
+                // Update Existing in Firebase
+                const updateRef = ref(db, 'sales/' + editKey);
+                set(updateRef, record);
             }
 
-            saveData();
             resetForm();
-            renderTable();
         });
 
-        // Save Data to LocalStorage
-        function saveData() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(salesData));
-        }
-
-        // Reset Form
-        function resetForm() {
+        window.resetForm = function() {
             document.getElementById('salesForm').reset();
-            document.getElementById('editIndex').value = "-1";
+            document.getElementById('editKey').value = "";
             document.getElementById('saleDate').valueAsDate = new Date();
             document.getElementById('formTitle').innerText = "အရောင်းစာရင်း အသစ်ထည့်ရန်";
             document.getElementById('submitBtn').querySelector('span').innerText = "သိမ်းဆည်းမည်";
             document.getElementById('cancelBtn').classList.add('hidden');
         }
 
-        // Edit Record
-        function editRecord(index) {
-            const item = salesData[index];
-            document.getElementById('editIndex').value = index;
+        window.editRecord = function(id) {
+            const item = salesDataObj[id];
+            if (!item) return;
+
+            document.getElementById('editKey').value = id;
             document.getElementById('saleDate').value = item.date;
             document.getElementById('fuelType').value = item.fuelType;
             buyPriceInput.value = item.buyPrice;
@@ -447,23 +466,19 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Delete Record
-        function deleteRecord(index) {
+        window.deleteRecord = function(id) {
             if (confirm("ဒီစာရင်းမှတ်တမ်းကို ဖျက်ရန် သေချာပါသလား?")) {
-                salesData.splice(index, 1);
-                saveData();
-                renderTable();
+                const delRef = ref(db, 'sales/' + id);
+                remove(delRef);
             }
         }
 
-        // Clear Filters
-        function clearFilters() {
+        window.clearFilters = function() {
             document.getElementById('filterDate').value = '';
             document.getElementById('filterFuel').value = 'ALL';
             renderTable();
         }
 
-        // Helper to format ISO date (YYYY-MM-DD)
         function getTodayString() {
             const today = new Date();
             const year = today.getFullYear();
@@ -472,7 +487,6 @@
             return `${year}-${month}-${day}`;
         }
 
-        // Render Table & Metrics Dashboard
         function renderTable() {
             const filterDate = document.getElementById('filterDate').value;
             const filterFuel = document.getElementById('filterFuel').value;
@@ -481,23 +495,21 @@
             const noDataMsg = document.getElementById('noDataMsg');
             tableBody.innerHTML = '';
 
-            let filteredData = salesData.filter(item => {
+            let filteredData = salesDataArray.filter(item => {
                 const matchDate = filterDate ? item.date === filterDate : true;
                 const matchFuel = filterFuel !== 'ALL' ? item.fuelType === filterFuel : true;
                 return matchDate && matchFuel;
             });
 
-            // Calculate Overall Metrics
             let totalLiters = 0;
             let totalRevenue = 0;
             let totalProfit = 0;
 
-            filteredData.forEach((item, index) => {
+            filteredData.forEach((item) => {
                 totalLiters += item.liters;
                 totalRevenue += item.revenue;
                 totalProfit += item.profit;
 
-                // Color tags for fuel types
                 let fuelBadgeClass = "bg-blue-100 text-blue-800";
                 if(item.fuelType === '95 Octane') fuelBadgeClass = "bg-green-100 text-green-800";
                 if(item.fuelType === 'Diesel') fuelBadgeClass = "bg-amber-100 text-amber-800";
@@ -514,10 +526,10 @@
                     <td class="px-4 py-3 text-right font-bold text-green-600">${item.revenue.toLocaleString()} Ks</td>
                     <td class="px-4 py-3 text-right font-bold text-indigo-600">${item.profit.toLocaleString()} Ks</td>
                     <td class="px-4 py-3 text-center">
-                        <button onclick="editRecord(${index})" class="text-blue-600 hover:text-blue-800 mx-1 p-1" title="ပြင်ဆင်မည်">
+                        <button onclick="editRecord('${item.id}')" class="text-blue-600 hover:text-blue-800 mx-1 p-1" title="ပြင်ဆင်မည်">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
-                        <button onclick="deleteRecord(${index})" class="text-red-600 hover:text-red-800 mx-1 p-1" title="ဖျက်မည်">
+                        <button onclick="deleteRecord('${item.id}')" class="text-red-600 hover:text-red-800 mx-1 p-1" title="ဖျက်မည်">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
@@ -525,13 +537,12 @@
                 tableBody.appendChild(tr);
             });
 
-            // Calculate Today Metrics (Filtering salesData for today's date)
             const todayStr = getTodayString();
             let todayLiters = 0;
             let todayRevenue = 0;
             let todayProfit = 0;
 
-            salesData.forEach(item => {
+            salesDataArray.forEach(item => {
                 if (item.date === todayStr) {
                     todayLiters += item.liters;
                     todayRevenue += item.revenue;
@@ -539,7 +550,6 @@
                 }
             });
 
-            // Update Dashboards
             document.getElementById('dashTodayLiters').innerText = todayLiters.toLocaleString() + ' L';
             document.getElementById('dashTodayRevenue').innerText = todayRevenue.toLocaleString() + ' Ks';
             document.getElementById('dashTodayProfit').innerText = todayProfit.toLocaleString() + ' Ks';
@@ -555,17 +565,16 @@
             }
         }
 
-        // Export Table Data to CSV
-        function exportToCSV() {
-            if (salesData.length === 0) {
+        window.exportToCSV = function() {
+            if (salesDataArray.length === 0) {
                 alert("ထုတ်ယူရန် စာရင်း မှတ်တမ်း မရှိသေးပါ!");
                 return;
             }
 
-            let csvContent = "\uFEFF"; // UTF-8 BOM for Myanmar Text
+            let csvContent = "\uFEFF";
             csvContent += "ရက်စွဲ,ဆီအမျိုးအစား,ဝယ်ဈေး (ကျပ်),ရောင်းဈေး (ကျပ်),လီတာ,ရောင်းရငွေ (ကျပ်),အမြတ် (ကျပ်)\n";
 
-            salesData.forEach(row => {
+            salesDataArray.forEach(row => {
                 csvContent += `"${row.date}","${row.fuelType}",${row.buyPrice},${row.sellPrice},${row.liters},${row.revenue},${row.profit}\n`;
             });
 
@@ -579,8 +588,7 @@
             document.body.removeChild(link);
         }
 
-        // Initial Auth Check
-        checkAuth();
+        window.checkAuth();
     </script>
 </body>
 </html>
