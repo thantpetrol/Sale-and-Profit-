@@ -584,7 +584,8 @@
             csvContent += "ရက်စွဲ,ဆီအမျိုးအစား,ဝယ်ဈေး (ကျပ်),ရောင်းဈေး (ကျပ်),လီတာ,ရောင်းရငွေ (ကျပ်),အမြတ် (ကျပ်)\n";
 
             salesDataArray.forEach(row => {
-                csvContent += `"${row.date}","${row.fuelType}",${row.buyPrice},${row.sellPrice},${row.liters},${row.revenue},${row.profit}\n`;
+                // Excel က ရက်စွဲကို အလိုအလျောက် မပြောင်းအောင် စာသားသပ်သပ်အနေဖြင့် ထည့်သွင်းခြင်း
+                csvContent += `="\t${row.date}","${row.fuelType}",${row.buyPrice},${row.sellPrice},${row.liters},${row.revenue},${row.profit}\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
