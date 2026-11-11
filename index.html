@@ -122,7 +122,7 @@
                     <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3 text-white">
                         အရောင်းအဝယ်စာရင်း မှတ်တမ်း
                     </h1>
-                    <p class="text-blue-300 text-xs md:text-sm mt-1 font-bold">နေ့စဉ် ဆီအရောင်း၊ ဝင်ငွေနှင့် အမြတ်စာရင်း စီမံခန့်ခွဲမှု (Online Real-time Sync)</p>
+                    <p class="text-blue-300 text-xs md:text-sm mt-1 font-bold">နေ့စဉ် ဆီအရောင်း၊ ဝင်ငွေနှင့် အမြတ်စာရင်း စီမံခန့်ခွဲမှု (Optimized Connection)</p>
                 </div>
             </div>
             <div class="flex items-center gap-3 w-full md:w-auto justify-end">
@@ -341,7 +341,7 @@
     <!-- Firebase & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getDatabase, ref, push, set, remove, get, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCaLriBbZAHfh5dKIBCWtx4Z7zUOiRpb6U",
@@ -369,6 +369,8 @@
             if (isLoggedIn === 'true') {
                 loginModal.classList.add('hidden');
                 mainApp.classList.remove('hidden');
+                // Login ဝင်ပြီးမှသာ ဒေတာကို တစ်ကြိမ်ဆွဲယူပါ (Connections အမြဲပွင့်နေခြင်းကို ကာကွယ်ရန်)
+                fetchSalesData();
             } else {
                 loginModal.classList.remove('hidden');
                 mainApp.classList.add('hidden');
@@ -400,20 +402,26 @@
         let salesDataArray = [];
 
         const salesRef = ref(db, 'sales');
-        onValue(salesRef, (snapshot) => {
-            const data = snapshot.val();
-            salesDataObj = data || {};
-            salesDataArray = [];
-            
-            for (let key in salesDataObj) {
-                salesDataArray.push({
-                    id: key,
-                    ...salesDataObj[key]
-                });
-            }
-            salesDataArray.sort((a, b) => new Date(b.date) - new Date(a.date));
-            renderTable();
-        });
+
+        // အမြဲချိတ်ဆက်နေသော onValue အစား လိုအပ်မှသာ တစ်ခါချင်း ဝင်ဖတ်သော get() ကို အသုံးပြုထားပါသည် (Connection အလဟဿ တက်ခြင်းမှ ကာကွယ်ရန်)
+        function fetchSalesData() {
+            get(salesRef).then((snapshot) => {
+                const data = snapshot.val();
+                salesDataObj = data || {};
+                salesDataArray = [];
+                
+                for (let key in salesDataObj) {
+                    salesDataArray.push({
+                        id: key,
+                        ...salesDataObj[key]
+                    });
+                }
+                salesDataArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+                renderTable();
+            }).catch((error) => {
+                console.error("Error fetching data: ", error);
+            });
+        }
 
         document.getElementById('saleDate').valueAsDate = new Date();
 
@@ -500,6 +508,7 @@
                     .then(() => {
                         alert("အရောင်းစာရင်း အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။");
                         resetForm();
+                        fetchSalesData(); // ဒေတာအသစ်ထည့်ပြီးပါက စာရင်းကို ပြန်လည်ဆွဲယူပါ
                     })
                     .catch((error) => {
                         alert("သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိပါသည်: " + error.message);
@@ -510,6 +519,7 @@
                     .then(() => {
                         alert("အရောင်းစာရင်း ပြင်ဆင်ပြီးပါပြီ။");
                         resetForm();
+                        fetchSalesData(); // ပြင်ဆင်ပြီးပါက စာရင်းကို ပြန်လည်ဆွဲယူပါ
                     })
                     .catch((error) => {
                         alert("ပြင်ဆင်ရာတွင် အမှားအယွင်းရှိပါသည်: " + error.message);
@@ -561,7 +571,9 @@
 
             if (confirm("ဒီစာရင်းမှတ်တမ်းကို ဖျက်ရန် သေချာပါသလား?")) {
                 const delRef = ref(db, 'sales/' + id);
-                remove(delRef);
+                remove(delRef).then(() => {
+                    fetchSalesData(); // ဖျက်ပြီးပါက စာရင်းကို ပြန်လည်ဆွဲယူပါ
+                });
             }
         }
 
