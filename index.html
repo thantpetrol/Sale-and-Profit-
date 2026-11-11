@@ -13,38 +13,38 @@
     <style>
         body {
             font-family: 'Padauk', sans-serif;
-            background: linear-gradient(135deg, rgba(9, 13, 22, 0.4) 0%, rgba(17, 24, 39, 0.4) 50%, rgba(30, 27, 75, 0.4) 100%);
+            background: linear-gradient(135deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
             background-attachment: fixed;
             color: #ffffff;
         }
-        /* High Transparency Glassmorphism to see phone screen clearly */
+        /* Transparent Glassmorphism for Clear Background Screen Visibility */
         .glass-card {
             background: rgba(15, 23, 42, 0.35);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
         .glass-modal {
-            background: rgba(11, 15, 25, 0.65);
+            background: rgba(11, 15, 25, 0.55);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
         }
         .glass-input {
-            background: rgba(15, 23, 42, 0.45);
+            background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: #ffffff;
         }
         .glass-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
         }
         .glass-input option {
             background-color: #0f172a;
             color: #ffffff;
         }
         .glass-table-header {
-            background: rgba(30, 41, 59, 0.5);
-            backdrop-filter: blur(8px);
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
@@ -54,22 +54,22 @@
     <div id="loginModal" class="fixed inset-0 glass-modal z-50 flex items-center justify-center p-4">
         <div class="glass-card w-full max-w-md rounded-3xl shadow-2xl overflow-hidden p-2">
             <div class="p-6 text-center">
-                <div class="w-20 h-20 bg-white/90 rounded-2xl flex items-center justify-center mx-auto mb-4 p-2 shadow-lg border border-white/40">
+                <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 p-2 shadow-lg border border-white/40">
                     <img src="https://i.postimg.cc/X7qv5CXW/Logopit-1785083590716.png" alt="Logo" class="w-full h-full object-contain">
                 </div>
-                <h2 class="text-xl font-bold text-white drop-shadow">အရောင်းအဝယ်စာရင်း</h2>
-                <p class="text-xs text-blue-200 mt-1 font-bold">စနစ်သို့ ဝင်ရောက်ရန် Login ပြုလုပ်ပါ</p>
+                <h2 class="text-xl font-bold text-white">အရောင်းအဝယ်စာရင်း</h2>
+                <p class="text-xs text-blue-300 mt-1 font-bold">စနစ်သို့ ဝင်ရောက်ရန် Login ပြုလုပ်ပါ</p>
             </div>
             
             <form id="loginForm" onsubmit="handleLogin(event)" class="px-6 pb-6 space-y-4">
-                <div id="loginError" class="hidden bg-red-500/40 text-red-200 border border-red-500/50 text-xs rounded-xl p-3 text-center font-bold">
+                <div id="loginError" class="hidden bg-red-500/30 text-red-200 border border-red-500/40 text-xs rounded-xl p-3 text-center font-bold">
                     <i class="fa-solid fa-circle-exclamation mr-1"></i> Username သို့မဟုတ် Password မှားယွင်းနေပါသည်။
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-blue-200 mb-1">Username</label>
+                    <label class="block text-xs font-bold text-blue-300 mb-1">Username</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-300">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-400">
                             <i class="fa-solid fa-user text-sm"></i>
                         </span>
                         <input type="text" id="usernameInput" required placeholder="Enter username" 
@@ -78,9 +78,9 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-blue-200 mb-1">Password</label>
+                    <label class="block text-xs font-bold text-blue-300 mb-1">Password</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-300">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-400">
                             <i class="fa-solid fa-lock text-sm"></i>
                         </span>
                         <input type="password" id="passwordInput" required placeholder="Enter password" 
@@ -102,22 +102,22 @@
         <!-- Header -->
         <div class="glass-card p-6 rounded-3xl shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-white/90 rounded-2xl flex items-center justify-center p-2 shadow-lg border border-white/40 shrink-0">
+                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center p-2 shadow-lg border border-white/40 shrink-0">
                     <img src="https://i.postimg.cc/X7qv5CXW/Logopit-1785083590716.png" alt="Logo" class="w-full h-full object-contain">
                 </div>
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3 text-white drop-shadow">
+                    <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3 text-white">
                         အရောင်းအဝယ်စာရင်း မှတ်တမ်း
                     </h1>
-                    <p class="text-blue-200 text-xs md:text-sm mt-1 font-bold">နေ့စဉ် ဆီအရောင်း၊ ဝင်ငွေနှင့် အမြတ်စာရင်း စီမံခန့်ခွဲမှု (Online Real-time Sync)</p>
+                    <p class="text-blue-300 text-xs md:text-sm mt-1 font-bold">နေ့စဉ် ဆီအရောင်း၊ ဝင်ငွေနှင့် အမြတ်စာရင်း စီမံခန့်ခွဲမှု (Online Real-time Sync)</p>
                 </div>
             </div>
             <div class="flex items-center gap-3 w-full md:w-auto justify-end">
-                <div class="flex items-center gap-2 bg-black/30 px-4 py-2.5 rounded-2xl text-xs md:text-sm border border-white/25 text-blue-100 font-bold">
+                <div class="flex items-center gap-2 bg-black/30 px-4 py-2.5 rounded-2xl text-xs md:text-sm border border-white/20 text-blue-200 font-bold">
                     <i class="fa-regular fa-clock text-yellow-400"></i>
                     <span id="currentDateTime"></span>
                 </div>
-                <button onclick="handleLogout()" class="bg-red-600/90 hover:bg-red-600 text-white text-xs font-bold px-4 py-2.5 rounded-2xl transition flex items-center gap-1 shadow-lg">
+                <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-4 py-2.5 rounded-2xl transition flex items-center gap-1 shadow-lg">
                     <i class="fa-solid fa-right-from-bracket"></i> ထွက်မည်
                 </button>
             </div>
@@ -127,70 +127,70 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="glass-card p-5 rounded-2xl border-l-4 border-blue-400 shadow-lg flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-bold text-blue-200 uppercase tracking-wider">ယနေ့ ရောင်းရလီတာ</p>
-                    <h3 class="text-2xl font-bold text-white mt-1 drop-shadow" id="dashTodayLiters">0 L</h3>
+                    <p class="text-xs font-bold text-blue-300 uppercase tracking-wider">ယနေ့ ရောင်းရလီတာ</p>
+                    <h3 class="text-2xl font-bold text-white mt-1" id="dashTodayLiters">0 L</h3>
                 </div>
-                <div class="w-12 h-12 bg-blue-500/30 rounded-xl flex items-center justify-center text-blue-200 border border-blue-400/50">
+                <div class="w-12 h-12 bg-blue-500/30 rounded-xl flex items-center justify-center text-blue-300 border border-blue-400/50">
                     <i class="fa-solid fa-droplet text-xl"></i>
                 </div>
             </div>
 
             <div class="glass-card p-5 rounded-2xl border-l-4 border-emerald-400 shadow-lg flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-bold text-emerald-200 uppercase tracking-wider">ယနေ့ ရောင်းရငွေ</p>
-                    <h3 class="text-2xl font-bold text-emerald-300 mt-1 drop-shadow" id="dashTodayRevenue">0 Ks</h3>
+                    <p class="text-xs font-bold text-emerald-300 uppercase tracking-wider">ယနေ့ ရောင်းရငွေ</p>
+                    <h3 class="text-2xl font-bold text-emerald-400 mt-1" id="dashTodayRevenue">0 Ks</h3>
                 </div>
-                <div class="w-12 h-12 bg-emerald-500/30 rounded-xl flex items-center justify-center text-emerald-200 border border-emerald-400/50">
+                <div class="w-12 h-12 bg-emerald-500/30 rounded-xl flex items-center justify-center text-emerald-300 border border-emerald-400/50">
                     <i class="fa-solid fa-money-bill-wave text-xl"></i>
                 </div>
             </div>
 
             <div class="glass-card p-5 rounded-2xl border-l-4 border-indigo-400 shadow-lg flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-bold text-indigo-200 uppercase tracking-wider">ယနေ့ အမြတ်ငွေ</p>
-                    <h3 class="text-2xl font-bold text-indigo-200 mt-1 drop-shadow" id="dashTodayProfit">0 Ks</h3>
+                    <p class="text-xs font-bold text-indigo-300 uppercase tracking-wider">ယနေ့ အမြတ်ငွေ</p>
+                    <h3 class="text-2xl font-bold text-indigo-300 mt-1" id="dashTodayProfit">0 Ks</h3>
                 </div>
-                <div class="w-12 h-12 bg-indigo-500/30 rounded-xl flex items-center justify-center text-indigo-200 border border-indigo-400/50">
+                <div class="w-12 h-12 bg-indigo-500/30 rounded-xl flex items-center justify-center text-indigo-300 border border-indigo-400/50">
                     <i class="fa-solid fa-chart-line text-xl"></i>
                 </div>
             </div>
 
             <div class="glass-card p-5 rounded-2xl border-l-4 border-amber-400 shadow-lg flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-bold text-amber-200 uppercase tracking-wider">ယနေ့ ရောင်းအားအကောင်းဆုံးဆီ</p>
-                    <h3 class="text-lg font-bold text-white mt-1 drop-shadow" id="dashTodayTopFuel">-</h3>
+                    <p class="text-xs font-bold text-amber-300 uppercase tracking-wider">ယနေ့ ရောင်းအားအကောင်းဆုံးဆီ</p>
+                    <h3 class="text-lg font-bold text-white mt-1" id="dashTodayTopFuel">-</h3>
                 </div>
-                <div class="w-12 h-12 bg-amber-500/30 rounded-xl flex items-center justify-center text-amber-200 border border-amber-400/50">
+                <div class="w-12 h-12 bg-amber-500/30 rounded-xl flex items-center justify-center text-amber-300 border border-amber-400/50">
                     <i class="fa-solid fa-star text-xl"></i>
                 </div>
             </div>
 
             <div class="glass-card p-5 rounded-2xl shadow-lg flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-bold text-gray-200 uppercase tracking-wider">စုစုပေါင်း ရောင်းရလီတာ</p>
-                    <h3 class="text-2xl font-bold text-white mt-1 drop-shadow" id="dashTotalLiters">0 L</h3>
+                    <p class="text-xs font-bold text-gray-300 uppercase tracking-wider">စုစုပေါင်း ရောင်းရလီတာ</p>
+                    <h3 class="text-2xl font-bold text-white mt-1" id="dashTotalLiters">0 L</h3>
                 </div>
-                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-gray-100 border border-white/20">
+                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-gray-200 border border-white/20">
                     <i class="fa-solid fa-gas-pump text-xl"></i>
                 </div>
             </div>
 
             <div class="glass-card p-5 rounded-2xl shadow-lg flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-bold text-gray-200 uppercase tracking-wider">စုစုပေါင်း ရောင်းရငွေ</p>
-                    <h3 class="text-2xl font-bold text-emerald-300 mt-1 drop-shadow" id="dashTotalRevenue">0 Ks</h3>
+                    <p class="text-xs font-bold text-gray-300 uppercase tracking-wider">စုစုပေါင်း ရောင်းရငွေ</p>
+                    <h3 class="text-2xl font-bold text-emerald-400 mt-1" id="dashTotalRevenue">0 Ks</h3>
                 </div>
-                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-emerald-200 border border-white/20">
+                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-emerald-300 border border-white/20">
                     <i class="fa-solid fa-wallet text-xl"></i>
                 </div>
             </div>
 
             <div class="glass-card p-5 rounded-2xl shadow-lg flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-bold text-gray-200 uppercase tracking-wider">စုစုပေါင်း အမြတ်ငွေ</p>
-                    <h3 class="text-2xl font-bold text-indigo-200 mt-1 drop-shadow" id="dashTotalProfit">0 Ks</h3>
+                    <p class="text-xs font-bold text-gray-300 uppercase tracking-wider">စုစုပေါင်း အမြတ်ငွေ</p>
+                    <h3 class="text-2xl font-bold text-indigo-300 mt-1" id="dashTotalProfit">0 Ks</h3>
                 </div>
-                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-indigo-200 border border-white/20">
+                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-indigo-300 border border-white/20">
                     <i class="fa-solid fa-coins text-xl"></i>
                 </div>
             </div>
@@ -198,7 +198,7 @@
 
         <!-- Sales Form Section -->
         <div class="glass-card rounded-3xl shadow-xl p-6">
-            <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2 drop-shadow">
+            <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-plus-circle text-blue-400"></i>
                 <span id="formTitle">အရောင်းစာရင်း အသစ်ထည့်ရန်</span>
             </h2>
@@ -206,12 +206,12 @@
                 <input type="hidden" id="editKey" value="">
 
                 <div>
-                    <label class="block text-xs font-bold text-blue-200 mb-1">ရက်စွဲ</label>
+                    <label class="block text-xs font-bold text-blue-300 mb-1">ရက်စွဲ</label>
                     <input type="date" id="saleDate" required class="w-full glass-input rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none font-bold">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-blue-200 mb-1">ဆီအမျိုးအစား</label>
+                    <label class="block text-xs font-bold text-blue-300 mb-1">ဆီအမျိုးအစား</label>
                     <select id="fuelType" required class="w-full glass-input rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none font-bold">
                         <option value="92 Octane">92 Octane</option>
                         <option value="95 Octane">95 Octane</option>
@@ -221,28 +221,28 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-blue-200 mb-1">ဆီဝယ်ဈေး (၁ လီတာ / ကျပ်)</label>
+                    <label class="block text-xs font-bold text-blue-300 mb-1">ဆီဝယ်ဈေး (၁ လီတာ / ကျပ်)</label>
                     <input type="number" step="any" id="buyPrice" placeholder="ဥပမာ - 2800" required class="w-full glass-input rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none font-bold">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-blue-200 mb-1">ဆီရောင်းဈေး (၁ လီတာ / ကျပ်)</label>
+                    <label class="block text-xs font-bold text-blue-300 mb-1">ဆီရောင်းဈေး (၁ လီတာ / ကျပ်)</label>
                     <input type="number" step="any" id="sellPrice" placeholder="ဥပမာ - 3100" required class="w-full glass-input rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none font-bold">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-blue-200 mb-1">ရောင်းရငွေ (စုစုပေါင်း ကျပ်)</label>
+                    <label class="block text-xs font-bold text-blue-300 mb-1">ရောင်းရငွေ (စုစုပေါင်း ကျပ်)</label>
                     <input type="number" step="any" id="totalRevenue" placeholder="ဥပမာ - 310000" class="w-full glass-input bg-yellow-500/20 border-yellow-500/40 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none font-bold text-yellow-300">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-blue-200 mb-1">ရောင်းရလီတာ (Liter)</label>
+                    <label class="block text-xs font-bold text-blue-300 mb-1">ရောင်းရလီတာ (Liter)</label>
                     <input type="number" step="any" id="liters" placeholder="ဥပမာ - 100" required class="w-full glass-input rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none font-bold">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-blue-200 mb-1">စုစုပေါင်း အမြတ် (ကျပ်)</label>
-                    <input type="number" id="totalProfit" readonly placeholder="Auto Calculated" class="w-full glass-input bg-black/40 text-emerald-300 font-bold rounded-xl p-2.5 text-sm outline-none border-dashed border-white/30">
+                    <label class="block text-xs font-bold text-blue-300 mb-1">စုစုပေါင်း အမြတ် (ကျပ်)</label>
+                    <input type="number" id="totalProfit" readonly placeholder="Auto Calculated" class="w-full glass-input bg-black/30 text-emerald-300 font-bold rounded-xl p-2.5 text-sm outline-none border-dashed border-white/30">
                 </div>
 
                 <div class="flex items-end gap-2">
@@ -261,21 +261,21 @@
         <div class="glass-card rounded-3xl shadow-xl p-6">
             <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-6">
                 <div>
-                    <h2 class="text-lg font-bold text-white flex items-center gap-2 drop-shadow">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-history text-indigo-400"></i>
                         ဆီအရောင်း စာရင်း မှတ်တမ်းများ
                     </h2>
-                    <p class="text-xs text-blue-200 mt-0.5 font-bold">ရက်စွဲအကွာအဝေး (မှ - ထိ) နှင့် ဆီအမျိုးအစားအလိုက် ရှာဖွေနိုင်ပါသည်</p>
+                    <p class="text-xs text-blue-300 mt-0.5 font-bold">ရက်စွဲအကွာအဝေး (မှ - ထိ) နှင့် ဆီအမျိုးအစားအလိုက် ရှာဖွေနိုင်ပါသည်</p>
                 </div>
 
                 <!-- Filters & Search Button -->
                 <div class="flex flex-wrap items-center gap-2 w-full xl:w-auto">
                     <div class="flex items-center gap-1">
-                        <span class="text-xs text-blue-200 font-bold">မှ</span>
+                        <span class="text-xs text-blue-300 font-bold">မှ</span>
                         <input type="date" id="startDate" class="glass-input rounded-xl p-2 text-xs outline-none font-bold">
                     </div>
                     <div class="flex items-center gap-1">
-                        <span class="text-xs text-blue-200 font-bold">ထိ</span>
+                        <span class="text-xs text-blue-300 font-bold">ထိ</span>
                         <input type="date" id="endDate" class="glass-input rounded-xl p-2 text-xs outline-none font-bold">
                     </div>
                     <select id="filterFuel" class="glass-input rounded-xl p-2 text-xs outline-none font-bold">
@@ -288,7 +288,7 @@
                     <button onclick="renderTable()" class="bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow">
                         <i class="fa-solid fa-search"></i> Search
                     </button>
-                    <button onclick="clearFilters()" class="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition border border-white/25">
+                    <button onclick="clearFilters()" class="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition border border-white/20">
                         Reset
                     </button>
                     <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow">
@@ -298,9 +298,9 @@
             </div>
 
             <!-- Table -->
-            <div class="overflow-x-auto rounded-2xl border border-white/25 bg-black/25">
+            <div class="overflow-x-auto rounded-2xl border border-white/20 bg-black/30">
                 <table class="w-full text-sm text-left text-gray-100">
-                    <thead class="text-xs text-blue-200 uppercase glass-table-header border-b border-white/25">
+                    <thead class="text-xs text-blue-300 uppercase glass-table-header border-b border-white/20">
                         <tr>
                             <th class="px-4 py-3.5 font-bold">ရက်စွဲ</th>
                             <th class="px-4 py-3.5 font-bold">ဆီအမျိုးအစား</th>
@@ -312,12 +312,12 @@
                             <th class="px-4 py-3.5 text-center font-bold">လုပ်ဆောင်ချက်</th>
                         </tr>
                     </thead>
-                    <tbody id="salesTableBody" class="divide-y divide-white/15">
+                    <tbody id="salesTableBody" class="divide-y divide-white/10">
                         <!-- Table Rows will be rendered dynamically -->
                     </tbody>
                 </table>
             </div>
-            <div id="noDataMsg" class="hidden text-center py-12 text-blue-200 font-bold">
+            <div id="noDataMsg" class="hidden text-center py-12 text-blue-300 font-bold">
                 <i class="fa-solid fa-box-open text-4xl mb-2 block"></i>
                 စာရင်း မှတ်တမ်းများ မရှိသေးပါ။
             </div>
